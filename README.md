@@ -179,3 +179,6 @@ We can see that our MySQL service is correctly deployed inside the pod in kubern
 Sections Google Labs 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/51a6d2b2-ca8a-47e6-b76e-74e9aaf11b17)
+
+![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/6f3a3707-e89e-4a6e-91f2-6478e985bb1b)
+
