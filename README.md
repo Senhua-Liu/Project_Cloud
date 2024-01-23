@@ -26,10 +26,22 @@ First of all we have created our application which is a simple JS service with H
 That being done, we have to containairize our application.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/b091c933-18dc-4afa-a98a-cc696556f54c)
+```
+docker ps
+```
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/e05ddaea-bba7-4f28-88ae-5c719c71910b)
+```
+cd nodeapp_test_master
+cat dockerfile
+ls
+docker build -t Incalenn/nodeapp.
+```
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/7cc4e6e6-b6ef-45ac-afbc-6d029c422407)
+```
+docker run -d -p 3000:3000 incalenn/nodeapp
+```
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/33ba8d2a-aecd-4a4c-a17e-d24d74d22140)
 
@@ -47,10 +59,18 @@ The app functions correctly
 We know that the app function locally, but we want to host it on kubernetes so we will remove the container :
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/af46610c-05a4-4ae8-930b-b6c1f7e96414)
+```
+docker ps
+docker stop [container ID]
+docker rm [container ID]
+```
 
 Now we need to push the image to DockerHub : 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/139a4d74-5abc-49b7-a01b-7c0ca852fca0)
+```
+docker push incalenn/nodeapp:latest
+```
 
 The Image has successfully been pushed on DockerHub
 
@@ -84,37 +104,64 @@ Next step is to create and deploy an application in kubernetes
 We will use minikube.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/11725f85-0c02-440f-959b-a56c9d5ba7f7)
+```
+minikube start
+```
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/bfd28997-dac0-431c-a3f9-4cf982370dba)
+```
+minikube status
+```
 
 We verify our kubernetes environment :
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/f0e7ecd9-fb97-4ae1-9843-d94b3f4d9544)
+```
+kubectl get pods
+kubectl get deployments
+kubectl get svc
+```
 
 These are already running pods and deployments and svcs which are personal.
 We now apply kubectl to the deployment.yml file we created.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/6e487f5c-ecbf-4528-aacd-57957fbdc9b1)
+```
+kubectl apply -f deployment.yml
+```
 
 We now check if it’s correctly created 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/e3265597-5d85-4971-ba15-3786971031b3)
+```
+kubectl get deployment
+```
 
 As expected it has correctly been applied and completed.
 As a consequence a pod has been created which is right here : 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/bac6ee0e-00b2-4a15-8fff-d734eb387e11)
+```
+kubectl get pods
+```
 
 The nodeapp-deployment-5bbf9759db-qmmvr.
 In order to access this deployment we need to have a service
 So we do the same step with our service.yml file
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/84fd4645-3484-47c9-b4e2-528323a3fdc1)
+```
+kubectl apply -f service.yml
+kubectl get svc
+```
 
 Our nodeapp-service is bind to the port 5000 mapping to the 31110/TCP.
 Now to access our application from outside, we get more information since it’s a minikube. 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/32740679-18b0-4e22-bc73-8693d215e5fd)
+```
+minikube service nodeapp-service
+```
 
 We can find the url to access our application.
 
@@ -133,38 +180,67 @@ Now our application is running on a Kubernetes cluster.
 We create the password that will be used during the MySQL server connection inside the dedicated yaml file.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/e786c36a-9ce6-45a3-960e-51fda3bb2f21)
+```
+kubectl apply -f mysql-secret.yaml
+```
 
 We define the volumes that will be used by the MySQL server so that we can store the data : 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/916ecd33-4ba0-42f8-8ded-21e2831d09e6)
+```
+kubectl apply -f mysql-storage.yml
+```
 
 We define the MySQL Container that will be deployed on the kubernetes cluster : 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/06e25f2f-ba06-47fc-9686-8e3d1866926b)
+```
+kubectl apply -f mysql-deployment.yml
+```
 
 We create a service so that we can access the mysql service inside and outside the cluster :
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/33044f01-31b7-4d35-ace8-5f201facea21)
+```
+kubectl apply -f mysql-serviceNodePort.yaml
+```
 
 We verify the configurations previously done :
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/3b30166a-26df-4392-a94d-b3e341c891d5)
+```
+kubectl get secrets
+```
 
 According to the Age  criteria we can see the different configurations we’ve deployed (for the MySQL service).
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/4af1bf75-c084-4fb0-a893-7fe253fd92e7)
+```
+kubectl create secret generic mysql-root-pass --from-literal-password=test123
+kubectl create secret generic mysql-user-pass --from-literal-username=alenn
+kubectl create secret generic mysql-db-url --from-literal-database=alenn_db
+```
 
 We create the database and generate the mandatory passwords whether root/user and also we develop the database url which generated as a generic entity.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/23ea191a-5d1d-4a08-80e4-3b2b990dd74e)
+```
+kubectl get secret
+```
 
 We can see that our configurations were correctly created.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/2e7ffb93-62fb-4aff-a514-4f415c10e26e)
+```
+kubectl create -f mysql.yaml
+```
 
 We create the mysql.yaml file that contains the necessary files to import the mysql service and insert it into a pod.
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/3f5ce33a-84da-458b-b1f4-c096796f6d07)
+```
+kubectl exec -it mysql-deployment-[HOSTNAME]
+```
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/e8ef2f6d-73b9-4e78-ae4e-f97079fe95b7)
 
@@ -173,12 +249,29 @@ Database has correctly been created inside the pods in kubernetes
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/882d16df-43d9-487b-9f52-b536d6ebe16e)
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/8b1b0434-3902-4d84-9141-1c307226f1e4)
+```
+kubectl get all
+kubectl get pods
+```
 
 We can see that our MySQL service is correctly deployed inside the pod in kubernetes.
+
+Issues
+
+Navigating Cloud Networking Complexity: We found that managing networking in a cloud setup, particularly with Kubernetes, was quite intricate. The task of enabling smooth communication between services and external databases involved grappling with the complexities of network policies, service discovery, and load balancing.
+
+Handling Configuration and Compatibility: Integrating different technologies like Node.js, various front-end frameworks, and different types of databases demanded precise configuration. We faced several compatibility issues, which often led to unexpected behaviors, slowing down our integration process.
+
+Containerization Hurdles: Although Docker greatly aids in deployment, it introduces its own set of complexities. Ensuring that the Docker containers for each segment of our project communicated effectively and were efficiently managed by Kubernetes was a significant challenge.
+
+Debugging in a Distributed System: We quickly learned that troubleshooting in a distributed system like Kubernetes is far more complex than in traditional setups. Identifying and solving issues such as service downtimes, network issues, and configuration errors proved to be a steep learning curve.
+
+Steep Learning Curve: Gaining proficiency in Kubernetes and other cloud-native technologies within the timeframe of this project was challenging. Although we made significant progress, mastering these technologies to a level that allows for full integration required extensive time and experience on our personal scale.
 
 Sections Google Labs 
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/51a6d2b2-ca8a-47e6-b76e-74e9aaf11b17)
 
 ![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/6f3a3707-e89e-4a6e-91f2-6478e985bb1b)
+
 
