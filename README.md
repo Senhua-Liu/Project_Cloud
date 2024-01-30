@@ -256,7 +256,11 @@ kubectl get pods
 
 We can see that our MySQL service is correctly deployed inside the pod in kubernetes.
 
-Issues
+### The FrontEnd
+
+![image](https://github.com/Senhua-Liu/Project_Cloud/assets/73168837/8a5a30e2-1edb-4439-921a-c2b3d96e1163)
+
+## Issues
 
 Navigating Cloud Networking Complexity: We found that managing networking in a cloud setup, particularly with Kubernetes, was quite intricate. The task of enabling smooth communication between services and external databases involved grappling with the complexities of network policies, service discovery, and load balancing.
 
